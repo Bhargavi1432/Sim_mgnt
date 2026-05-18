@@ -1,0 +1,264 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: auto;
+  overflow-y: auto;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+/* ===============================
+   Layout Variables
+================================ */
+:root {
+  --navbar-height: 56px;
+  --sidebar-width: 80px;
+}
+
+/* ===============================
+   Main Layout
+================================ */
+.main-content {
+  margin-top: var(--navbar-height);
+  margin-left: var(--sidebar-width);
+  width: calc(100vw - var(--sidebar-width));
+  max-width: calc(100vw - var(--sidebar-width));
+  min-height: calc(100vh - var(--navbar-height));
+  padding: 24px;
+  background-color: #f8fafc;
+  overflow-x: auto;
+}
+
+/* ===============================
+   Container
+================================ */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 24px;
+}
+
+/* ===============================
+   Toolbar
+================================ */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  color: black;
+}
+
+.btn.add.icon-btn {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ===============================
+   Table
+================================ */
+.table {
+  width: max-content; /* ✅ REQUIRED */
+}
+
+/* ===============================
+   ✅ ADD THIS FOR BOTTOM SCROLL
+================================ */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;   /* ✅ enables horizontal scroll */
+  overflow-y: hidden;
+  display: block;
+  padding-bottom: 0; /* ✅ makes scrollbar visible */
+}
+
+/* ✅ Optional scrollbar styling */
+.table-wrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+
+
+/* ===============================
+   HEADER (FIXED)
+================================ */
+
+.table-header {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(18, minmax(160px, 1fr));
+  background: #4C74B9;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: max-content;
+  color: #ffffff;
+}
+
+
+/* ===============================
+   HEADER CELLS
+================================ */
+.th {
+  padding: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  min-width: 160px;
+  max-width: 160px;
+  white-space: nowrap; 
+}
+
+.th:last-child {
+  border-right: none;
+}
+
+
+.table-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(18, minmax(160px, 1fr));
+  width: max-content;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s ease;
+}
+
+/* ✅ subtle hover (enterprise style) */
+.table-row:hover {
+  background: #f8fafc;
+}
+
+.table-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.td {
+  padding: 12px;
+  font-size: 12px;
+  min-width: 160px;
+  max-width: 160px;   /* ✅ keeps cells consistent */
+  white-space: nowrap; /* ✅ VERY IMPORTANT */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.td input {
+  width: 100%;
+  height: 32px;
+  padding: 6px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.td:last-child {
+  border-right: none;
+  min-width: 160px; /* ✅ keep Actions stable */
+}
+
+/* ===============================
+   Responsive (kept same)
+================================ */
+@media (max-width: 1200px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: repeat(18, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+.action-dropdown {
+  position: absolute;
+  right: 2%;
+  top: 36%; /* ✅ change from 0 */
+  width: 100px;
+  background: white;
+  border-radius: 2px;
+  padding: 4px 0;
+  z-index: 9999;  /* ✅ VERY HIGH */
+}
+
+
+.table-row:nth-last-child(-n+2) .action-dropdown {
+  top: auto;
+  bottom: 100%;
+  transform: translateY(-6px);
+}
+
+
+.action-menu-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;   /* size of dots */  
+}
+
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;        /* ✅ reduced from 12px → 6px */
+  font-size: 13px;          /* ✅ slightly smaller */
+  color: #1f2937;
+  cursor: pointer;
+  line-height: 1.2;         /* ✅ removes extra height */
+}
+
+.dropdown-item:hover {
+  background: #e5e7eb;
+  border-radius: 6px;
+}
+
+
+.action-menu-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
