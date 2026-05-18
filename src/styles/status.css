@@ -1,0 +1,141 @@
+/* =========================
+   SIM STATUS PAGE
+========================= */
+
+.status-container {
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color:#4C74B9;
+}
+
+/* =========================
+   TABLE LAYOUT
+========================= */
+
+.status-table {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.status-header,
+.status-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 1.5fr 1fr;
+  align-items: center;
+}
+
+/* HEADER */
+.status-header {
+  background: #4C74B9;
+  padding: 14px 16px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* ROW */
+.status-row {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #2c3e50;
+  transition: background 0.2s ease;
+}
+
+.status-row:hover {
+  background: #fafafa;
+}
+
+.status-row:last-child {
+  border-bottom: none;
+}
+
+/* =========================
+   DROPDOWN
+========================= */
+
+.status-row select {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-row select:hover {
+  border-color: #3498db;
+}
+
+.status-row select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+}
+
+/* =========================
+   STATUS BADGES
+========================= */
+
+.status {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  text-align: center;
+  min-width: 90px;
+}
+
+/* TERMINATED (LOCKED) */
+.status.terminated {
+  background: #fdecea;
+  color: #c0392b;
+  border: 1px solid #f5b7b1;
+  cursor: not-allowed;
+}
+
+/* Optional status colors (if used later) */
+.status.active {
+  background: #eafaf1;
+  color: #27ae60;
+}
+
+.status.suspend {
+  background: #fff6e5;
+  color: #f39c12;
+}
+
+.status.pre-active {
+  background: #ebf5fb;
+  color: #2980b9;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .status-header,
+  .status-row {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 10px;
+  }
+
+  .status-header div:nth-child(n + 3),
+  .status-row div:nth-child(n + 3) {
+    grid-column: span 2;
+  }
+}
