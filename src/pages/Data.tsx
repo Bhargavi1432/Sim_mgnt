@@ -8,7 +8,7 @@ import {
   FaEllipsisV,
   FaEdit,
   FaSave,
-  FaTrash,
+  FaTrash, FaSearch
 } from "react-icons/fa";
 import DashboardLayout from "../layouts/dashboardlayout";
 import "../styles/data.css";
@@ -24,6 +24,7 @@ interface SimRow {
   msisdn: string;
   iccid: string;
   imsi: string;
+  imes: string;
   eid: string;
   propositionID: string;
   accountID: string;
@@ -44,6 +45,7 @@ const EMPTY_ROW: Omit<SimRow, "id" | "currentDate"> = {
   msisdn: "",
   iccid: "",
   imsi: "",
+  imes: "",
   eid: "",
   propositionID: "",
   accountID: "",
@@ -61,7 +63,7 @@ const EMPTY_ROW: Omit<SimRow, "id" | "currentDate"> = {
 const STORAGE_KEY = "simData";
 
 const columns: (keyof SimRow)[] = [
-  "subscriptionId","msisdn","iccid","imsi","eid",
+  "subscriptionId","msisdn","iccid","imsi","imes","eid",
   "propositionID","accountID","personID","billingDOM",
   "activationDate","creationDate","planName","productType",
   "businessUnit","status","lastStatusChangeDate",
@@ -91,6 +93,9 @@ export default function DataPage() {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : [];
   });
+
+  const [searchText, setSearchText] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
 
   const [rows, setRows] = useState<SimRow[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -206,6 +211,7 @@ export default function DataPage() {
         msisdn: get(item, "MSISDN"),
         iccid: get(item, "ICCID"),
         imsi: get(item, "IMSI"),
+        imes: get(item, "IMES"),
         eid: get(item, "EID"),
         propositionID: get(item, "Proposition ID"),
         accountID: get(item, "Account ID"),
@@ -230,9 +236,57 @@ export default function DataPage() {
     e.target.value = "";
   };
 
+    const highlightText = (text: any) => {
+    if (!appliedSearch) return text;
+
+    const str = String(text);
+    const parts = str.split(
+      new RegExp(`(${appliedSearch.trim()})`, "gi")
+    );
+
+    return parts.map((part, i) =>
+      part.toLowerCase() === appliedSearch.trim().toLowerCase() ? (
+        <span key={i} className="highlight">{part}</span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const filteredRows = rows.filter((row: any) => {
+  if (!appliedSearch) return true;
+
+  return Object.values(row)
+    .join(" ")
+    .toLowerCase()
+    .includes(appliedSearch.toLowerCase());
+});
+
   return (
     <DashboardLayout>
       <div className="container">
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setAppliedSearch(searchText.trim());
+              }
+            }}
+            className="search-input"
+          />
+
+          <button
+            className="search-icon-btn"
+            onClick={() => setAppliedSearch(searchText.trim())}
+          >
+            <FaSearch />
+          </button>
+        </div>
+
         <div className="toolbar">
           <button className="btn icon-btn add" onClick={addRow}>
             <FaPlus />
@@ -248,7 +302,7 @@ export default function DataPage() {
           <div className="table">
             <div className="table-header">
               {[
-                "ID","Subscription ID","MSISDN","ICCID","IMSI","EID",
+                "ID","Subscription ID","MSISDN","ICCID","IMSI","IMES","EID",
                 "Proposition ID","Account ID","Person ID","Billing DOM",
                 "Activation Date","Creation Date","Plan Name","Product Type",
                 "Business Unit","Status","Last Status Change",
@@ -259,35 +313,43 @@ export default function DataPage() {
             </div>
 
             <div className="table-body">
-              {rows.map((row, index) => (
+              {filteredRows.map((row, index) => (
                 <div key={row.id} className="table-row">
 
                   <div className="td">{index + 1}</div>
 
                   {columns.map((field) => (
-                    <div key={field} className="td">
-                      {field === "status" ? (
-                        <span className="status-badge">{row.status || "-"}</span>
-                      ) : editingIndex === index ? (
-                        ["activationDate","creationDate","lastStatusChangeDate"].includes(field) ? (
+                      <div key={field} className="td">
+                        {field === "status" ? (
+                          <span className={`status-text ${row.status?.toLowerCase().replace(" ", "-")}`}>
+                            {highlightText(row.status || "-")}
+                          </span>
+                        ) : editingIndex === index ? (
                           <input
-                            type="datetime-local"
-                            value={toDateTimeLocal(row[field] as Epoch)}
-                            onChange={(e) => updateCell(index, field, e.target.value)}
-                          />
+                              type={
+                                field === "activationDate" ||
+                                field === "creationDate" ||
+                                field === "lastStatusChangeDate"
+                                  ? "datetime-local"
+                                  : "text"
+                              }
+                              value={
+                                field === "activationDate" ||
+                                field === "creationDate" ||
+                                field === "lastStatusChangeDate"
+                                  ? toDateTimeLocal(row[field] as Epoch)
+                                  : (row[field] ?? "")
+                              }
+                              onChange={(e) =>
+                                updateCell(index, field, e.target.value)
+                              }
+                            />
+
                         ) : (
-                          <input
-                            value={(row[field] ?? "") as any}
-                            onChange={(e) => updateCell(index, field, e.target.value)}
-                          />
-                        )
-                      ) : ["activationDate","creationDate","lastStatusChangeDate"].includes(field) ? (
-                        formatDate(row[field] as number)
-                      ) : (
-                        row[field] ?? ""
-                      )}
-                    </div>
-                  ))}
+                          highlightText(row[field] ?? "")
+                        )}
+                      </div>
+                    ))}
                   
                   <div className="td">{formatDate(row.currentDate)}</div>
 
